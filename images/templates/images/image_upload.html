@@ -1,0 +1,112 @@
+{% extends 'images/base.html' %}
+
+{% block title %}Upload Image - Visual Archive{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card fade-in">
+            <div class="card-header d-flex align-items-center">
+                <i class="bi bi-cloud-upload me-2"></i>
+                <h4 class="mb-0">Upload New Image</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <!-- Hidden CSRF token for AJAX requests -->
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+                    <div class="mb-4">
+                        <label for="title" class="form-label">
+                            <i class="bi bi-type me-1"></i> Title
+                        </label>
+                        <input type="text" class="form-control" id="title" name="title" required
+                               placeholder="Enter image title">
+                        <div class="invalid-feedback">Please provide a title for the image.</div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="description" class="form-label">
+                            <i class="bi bi-text-paragraph me-1"></i> Description
+                        </label>
+                        <textarea class="form-control" id="description" name="description" rows="3"
+                                  placeholder="Enter image description (optional)"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="category" class="form-label">
+                            <i class="bi bi-folder me-1"></i> Category
+                        </label>
+                        <select class="form-select" id="category" name="category">
+                            <option value="">No Category</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Select a category or leave as "No Category"
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="image" class="form-label">
+                            <i class="bi bi-image me-1"></i> Image
+                        </label>
+                        <input type="file" class="form-control" id="image" name="image" 
+                               accept="image/*" required>
+                        <div class="invalid-feedback">Please select an image file.</div>
+                        <div class="form-text">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Supported formats: JPEG, PNG, GIF
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-cloud-upload me-1"></i> Upload Image
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Form validation
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+
+    // Preview image before upload
+    document.getElementById('image').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.createElement('img');
+                preview.src = e.target.result;
+                preview.style.maxWidth = '100%';
+                preview.style.marginTop = '10px';
+                preview.style.borderRadius = '8px';
+                preview.className = 'mt-3 fade-in';
+                
+                const previewContainer = document.getElementById('image').parentElement;
+                const oldPreview = previewContainer.querySelector('img');
+                if (oldPreview) {
+                    oldPreview.remove();
+                }
+                previewContainer.appendChild(preview);
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends 'images/base.html' %}
+
+{% block title %}{{ image.title }} - Visual Archive{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Navigation and title -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="{% url 'images:image_list' %}" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Gallery
+        </a>
+        {% if image.category %}
+        <a href="{% url 'images:category_detail' image.category.id %}" class="btn btn-outline-secondary">
+            <i class="bi bi-folder2 me-1"></i> {{ image.category.name }}
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Main image and details -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-8">
+            <div class="image-detail-card">
+                <img src="{{ image.image.url }}" class="img-fluid" alt="{{ image.title }}">
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <h2 class="h3 card-title mb-4">{{ image.title }}</h2>
+
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="rounded-circle bg-light p-2 me-3">
+                            <i class="bi bi-calendar3 text-primary"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Upload Date</small>
+                            <span>{{ image.upload_date|date:"F d, Y" }}</span>
+                        </div>
+                    </div>
+
+                    {% if image.description %}
+                    <div class="d-flex align-items-start mb-4">
+                        <div class="rounded-circle bg-light p-2 me-3">
+                            <i class="bi bi-card-text text-primary"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block mb-2">Description</small>
+                            <p class="card-text">{{ image.description }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-light p-2 me-3">
+                            <i class="bi bi-folder2 text-primary"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Category</small>
+                            {% if image.category %}
+                            <span>{{ image.category.name }}</span>
+                            {% else %}
+                            <span class="badge bg-secondary">No Category</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- Related images section -->
+{% if related_images %}
+<div class="container px-0">
+    <div class="related-images">
+        <div class="d-flex align-items-center mb-4">
+            <div class="rounded-circle bg-light p-2 me-3">
+                <i class="bi bi-images text-primary"></i>
+            </div>
+            <h3 class="h4 mb-0">More from {% if image.category %}{{ image.category.name }}{% else %}Uncategorized
+                Images{% endif %}</h3>
+        </div>
+
+        <div class="row g-4">
+            {% for related_image in related_images %}
+            {% if related_image.id != image.id %}
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                <a href="{% url 'images:image_detail' related_image.id %}" class="text-decoration-none">
+                    <div class="card image-card border-0 shadow-sm h-100">
+                        <img src="{{ related_image.image.url }}" class="card-img-top" alt="{{ related_image.title }}">
+                        <div class="card-body">
+                            <h5 class="card-title text-dark h6 mb-2">{{ related_image.title }}</h5>
+                            <p class="card-text">
+                                <small class="text-muted d-flex align-items-center">
+                                    <i class="bi bi-calendar3 me-1"></i>
+                                    {{ related_image.upload_date|date:"M d, Y" }}
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

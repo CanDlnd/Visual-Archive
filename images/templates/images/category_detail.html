@@ -1,0 +1,76 @@
+{% extends 'images/base.html' %}
+
+{% block title %}{{ category.name }} - Visual Archive{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{% url 'images:image_list' %}" class="btn btn-outline-primary">
+        <i class="bi bi-arrow-left me-1"></i> Back to Gallery
+    </a>
+    <div class="my-3">
+        <h2 class="text-center">{{ category.name }}</h2>
+        {% if category.description %}
+        <p class="text-muted mb-0 text-center">{{ category.description }}</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="d-flex justify-content-end mb-3">
+    <div class="dropdown">
+        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="sortDropdown"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            {% if current_sort == '-upload_date' %}
+            Newest First
+            {% elif current_sort == 'upload_date' %}
+            Oldest First
+            {% elif current_sort == '-title' %}
+            Title (Z to A)
+            {% else %}
+            Title (A to Z)
+            {% endif %}
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
+            <li><a class="dropdown-item {% if current_sort == '-upload_date' %}active{% endif %}"
+                    href="?sort=-upload_date">Newest First</a></li>
+            <li><a class="dropdown-item {% if current_sort == 'upload_date' %}active{% endif %}"
+                    href="?sort=upload_date">Oldest First</a></li>
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item {% if current_sort == 'title' %}active{% endif %}" href="?sort=title">Title (A
+                    to Z)</a></li>
+            <li><a class="dropdown-item {% if current_sort == '-title' %}active{% endif %}" href="?sort=-title">Title (Z
+                    to A)</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="image-grid">
+    {% for image in images %}
+    <div class="fade-in">
+        <div class="card image-card">
+            <a data-fslightbox="gallery" href="{{ image.image.url }}" class="text-decoration-none">
+                <img src="{{ image.image.url }}" class="card-img-top" alt="{{ image.title }}">
+                <div class="zoom-indicator">
+                    <i class="bi bi-zoom-in"></i>
+                </div>
+            </a>
+            <div class="card-body">
+                <a href="{% url 'images:image_detail' image.id %}" class="text-decoration-none">
+                    <h5 class="card-title text-dark">{{ image.title }}</h5>
+                    <p class="card-text"><small class="text-muted">Uploaded: {{ image.upload_date|date:"M d, Y"
+                            }}</small></p>
+                </a>
+                <a href="{% url 'images:image_detail' image.id %}" class="btn btn-outline-primary btn-sm w-100 mt-2">
+                    <i class="bi bi-info-circle me-1"></i> View Details
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <p class="text-center">No images found in this category.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

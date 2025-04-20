@@ -1,0 +1,60 @@
+{% extends 'images/base.html' %}
+
+{% block title %}Login - Visual Archive{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function (alert) {
+            setTimeout(function () {
+                alert.style.opacity = '0';
+                setTimeout(function () {
+                    alert.remove();
+                }, 300);
+            }, 3000);
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        {% if messages %}
+        {% if messages.0 %}
+        <div class="alert alert-{{ messages.0.tags }} fade-in mb-4" role="alert"
+            style="transition: opacity 0.3s ease-out;">
+            {% if messages.0.tags == 'success' %}
+            <i class="bi bi-check-circle-fill me-2"></i>
+            {% elif messages.0.tags == 'error' %}
+            <i class="bi bi-exclamation-circle-fill me-2"></i>
+            {% endif %}
+            {{ messages.0 }}
+        </div>
+        {% endif %}
+        {% endif %}
+
+        <div class="card fade-in">
+            <div class="card-header">
+                <h4 class="mb-0">Login</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <input type="hidden" name="next" value="{{ next }}">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
