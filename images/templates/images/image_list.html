@@ -32,7 +32,11 @@
     </div>
 
     <div class="col-md-9">
-        <div class="d-flex justify-content-end mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="editModeToggle">
+                <label class="form-check-label" for="editModeToggle">Edit Mode</label>
+            </div>
             <div class="dropdown">
                 <button class="btn btn-outline-primary dropdown-toggle" type="button" id="sortDropdown"
                     data-bs-toggle="dropdown" aria-expanded="false">
@@ -96,12 +100,18 @@
                             </span>
                             {% endif %}
                         </p>
-                        <a href="{% url 'images:image_detail' image.id %}" class="btn btn-outline-primary btn-sm w-100">
-                            <i class="bi bi-info-circle me-1"></i> View Details
-                        </a>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'images:image_detail' image.id %}" class="btn btn-outline-primary btn-sm flex-grow-1">
+                                <i class="bi bi-info-circle me-1"></i> View Details
+                            </a>
+                            <button class="btn btn-outline-danger btn-sm delete-btn" style="display: none;" 
+                                    data-bs-toggle="modal" data-bs-target="#deleteModal" 
+                                    data-image-id="{{ image.id }}" data-image-title="{{ image.title }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                </a>
             </div>
             {% empty %}
             <div class="col-12 text-center py-5">
@@ -142,4 +152,53 @@
         {% endif %}
     </div>
 </div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete <span id="imageTitle"></span>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const editModeToggle = document.getElementById('editModeToggle');
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        const deleteModal = document.getElementById('deleteModal');
+        const deleteForm = document.getElementById('deleteForm');
+        const imageTitleSpan = document.getElementById('imageTitle');
+
+        // Toggle edit mode
+        editModeToggle.addEventListener('change', function() {
+            deleteButtons.forEach(btn => {
+                btn.style.display = this.checked ? 'block' : 'none';
+            });
+        });
+
+        // Handle delete button clicks
+        deleteModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const imageId = button.getAttribute('data-image-id');
+            const imageTitle = button.getAttribute('data-image-title');
+            
+            deleteForm.action = `{% url 'images:delete_image' 999 %}`.replace('999', imageId);
+            imageTitleSpan.textContent = imageTitle;
+        });
+    });
+</script>
 {% endblock %}

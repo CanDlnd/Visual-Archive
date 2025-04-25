@@ -105,3 +105,18 @@ def category_detail(request, category_id):
             'current_sort': sort
         }
     return render(request, 'images/category_detail.html', context)
+
+@login_required
+def delete_image(request, image_id):
+    image = get_object_or_404(Image, id=image_id)
+    # Store the return URL before deleting
+    referer = request.META.get('HTTP_REFERER')
+    
+    # Delete the image
+    image.delete()
+    messages.success(request, 'Image deleted successfully!')
+    
+    # Redirect back to the referring page, or image list if not available
+    if referer:
+        return redirect(referer)
+    return redirect('images:image_list')
