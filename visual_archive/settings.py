@@ -52,10 +52,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# CSRF Settings
-CSRF_COOKIE_SECURE = False  # Set to True in production
+# Security Settings
+CSRF_COOKIE_SECURE = 'DATABASE_URL' in os.environ  # True in production
 CSRF_COOKIE_HTTPONLY = True
 CSRF_USE_SESSIONS = True
+SESSION_COOKIE_SECURE = 'DATABASE_URL' in os.environ  # True in production
+SECURE_SSL_REDIRECT = 'DATABASE_URL' in os.environ  # True in production
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 ROOT_URLCONF = 'visual_archive.urls'
 
