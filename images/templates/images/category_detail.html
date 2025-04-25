@@ -21,23 +21,25 @@
     </div>
 </div>
 
-            Title (Z to A)
+<div class="d-flex justify-content-end mb-3">
+    <div class="dropdown">
+        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            {% if current_sort == '-upload_date' %}
+                Newest First
+            {% elif current_sort == 'upload_date' %}
+                Oldest First
+            {% elif current_sort == '-title' %}
+                Title (Z to A)
             {% else %}
-            Title (A to Z)
+                Title (A to Z)
             {% endif %}
         </button>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
-            <li><a class="dropdown-item {% if current_sort == '-upload_date' %}active{% endif %}"
-                    href="?sort=-upload_date">Newest First</a></li>
-            <li><a class="dropdown-item {% if current_sort == 'upload_date' %}active{% endif %}"
-                    href="?sort=upload_date">Oldest First</a></li>
-            <li>
-                <hr class="dropdown-divider">
-            </li>
-            <li><a class="dropdown-item {% if current_sort == 'title' %}active{% endif %}" href="?sort=title">Title (A
-                    to Z)</a></li>
-            <li><a class="dropdown-item {% if current_sort == '-title' %}active{% endif %}" href="?sort=-title">Title (Z
-                    to A)</a></li>
+            <li><a class="dropdown-item {% if current_sort == '-upload_date' %}active{% endif %}" href="?sort=-upload_date">Newest First</a></li>
+            <li><a class="dropdown-item {% if current_sort == 'upload_date' %}active{% endif %}" href="?sort=upload_date">Oldest First</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item {% if current_sort == 'title' %}active{% endif %}" href="?sort=title">Title (A to Z)</a></li>
+            <li><a class="dropdown-item {% if current_sort == '-title' %}active{% endif %}" href="?sort=-title">Title (Z to A)</a></li>
         </ul>
     </div>
 </div>
